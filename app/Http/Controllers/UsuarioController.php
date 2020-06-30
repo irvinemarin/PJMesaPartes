@@ -17,6 +17,7 @@ class UsuarioController extends Controller
         $username = $request->input('txt_username');
         $clave = $request->input('txt_clave');
 
+
         $abogadoUser = DB::table("abogado")
             ->where([
                 ['x_login', '=', $username],
@@ -25,96 +26,21 @@ class UsuarioController extends Controller
             ->limit(1)->get();
 
 
-        //dd($abogadoUser[0]->l_activo);
+        if ($abogadoUser != null) {
+            //dd($abogadoUser[0]->l_activo);
+            if ($abogadoUser[0]->l_activo == 1) {
 
+                $session = new Session();
 
-        if ($abogadoUser[0]->l_activo == 1) {
+                $session->set('username', $abogadoUser[0]->x_login);
+                $session->set('usernameId', $abogadoUser[0]->n_abogado);
 
-            $session = new Session();
-
-            $session->set('username', $abogadoUser[0]->x_login);
-
-            return redirect('expediente/index')->with(["abogadoUser" => $abogadoUser]);
+                return redirect('expediente/index')->with(["abogadoUser" => $abogadoUser]);
+            }
         } else {
             return redirect('/');
         }
 
     }
 
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Usuario $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Usuario $usuario)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Usuario $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Usuario $usuario)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Usuario $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Usuario $usuario)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Usuario $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Usuario $usuario)
-    {
-        //
-    }
 }

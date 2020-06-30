@@ -27,14 +27,17 @@
 @yield('content')
 <!-- END WRAPPER -->
 
-<!-- Javascript
+
 <script src="{!! asset('vendor/jquery/jquery.min.js') !!}" type="text/javascript"></script>
 <script src="{!! asset('vendor/bootstrap/js/bootstrap.min.js') !!}" type="text/javascript"></script>
 <script src="{!! asset('vendor/jquery-slimscroll/jquery.slimscroll.min.js') !!}" type="text/javascript"></script>
 <script src="{!! asset('vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js') !!}" type="text/javascript"></script>
 <script src="{!! asset('vendor/chartist/js/chartist.min.js') !!}" type="text/javascript"></script>
 <script src="{!! asset('scripts/klorofil-common.js') !!}" type="text/javascript"></script>
--->
+
+
+
+@yield('extra_js')
 </body>
 
 </html>

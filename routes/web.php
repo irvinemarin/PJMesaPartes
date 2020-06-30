@@ -30,7 +30,7 @@ Route::resource('abogado', 'AbogadoController');
 
 Route::get('expediente/index', 'ExpedienteController@index');
 Route::get('expediente/create', 'ExpedienteController@create');
-Route::get('expediente/store', 'ExpedienteController@store');
+Route::post('expediente/store', 'ExpedienteController@addExpediente');
 
 
 Route::get('escritos/index', 'EscritosController@index');
@@ -38,7 +38,18 @@ Route::get('escritos/create', 'EscritosController@create');
 Route::get('escritos/store', 'EscritosController@store');
 
 
-Route::post('subir','EscritosController@subirArchivo')->name('subir');
+Route::post('escritos/addParte', 'EscritosController@addParte');
+
+
+Route::post('/subir', 'ExpedienteController@subirArchivo')->name('upfile');
+Route::get('/out', 'ExpedienteController@singOut')->name('salir');
+
+
+Route::post('/addDocument', 'ExpedienteController@addDocument');
+
+Route::post('/allPartes', 'ExpedienteController@partesByExpediente');
+Route::post('/search', 'ExpedienteController@getExpediente');
+
 
 //Route::resources('Expediente','ExpedienteController' );
 //Route::resource('users', 'AdminUserController')->parameters([

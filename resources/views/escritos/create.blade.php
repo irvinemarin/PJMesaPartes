@@ -17,7 +17,7 @@
     </li>
 
     <li>
-        <a href="{{url('expediente/registrar')}}" class="active li_menu_item"><i class="lnr lnr-cloud-upload"></i>
+        <a href="{{url('escritos/registrar')}}" class="active li_menu_item"><i class="lnr lnr-cloud-upload"></i>
             <span>Escritos</span></a>
     </li>
 @endSection()
@@ -120,14 +120,6 @@
                         {!! Form::close() !!}
 
 
-                        <form method="POST" action="{{route('subir')}}" accept-charset="UTF-8"
-                              enctype="multipart/form-data">
-                            {{ csrf_field() }}
-                            <label for="archivo"><b>Archivo: </b></label><br>
-                            <input type="file" name="archivo" id="archivo" accept="application/pdf" required>
-                            <input class="btn btn-success" type="submit" value="Subir Documento">
-                        </form>
-
                         {{--                        <a href="{{ Storage::url('public/img/file_01.pdf') }}" class="btn  btn-primary "--}}
                         {{--                           target="_blank">VER DOCUMENTO--}}
                         {{--                            <i class="fas fa-download"></i>--}}
@@ -143,47 +135,5 @@
 @endSection()
 
 
-@section("script_adicional")
-    <script>
-
-
-        $('#archivo').on('change', function () {
-            var ext = $(this).val().split('.').pop();
-
-            if ($(this).val() != '') {
-                if (ext == "pdf") {
-
-                    var reader = new FileReader();
-                    reader.readAsBinaryString($(this)[0].files[0]);
-                    var archivo = $(this)[0].files[0];
-                    reader.onloadend = function () {
-                        var count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length;
-
-                        alert("La extensión es: " + ext + "\n" +
-                            "el nro de paginas es :" + count);
-
-                        $("#txt_nroHojas").val(count);
-
-
-                    }
-
-
-                    if ($(this)[0].files[0].size > 1048576 * 5) {
-                        console.log("El documento excede el tamaño máximo");
-                        alert("El documento excede el tamaño máximo");
-                        $(this).val('');
-                    } else {
-                        $("#modal-gral").hide();
-                    }
-                } else {
-                    $(this).val('');
-                    alert("Extensión no permitida: " + ext);
-                }
-            }
-        });
-
-    </script>
-
-@endsection()
 
 
