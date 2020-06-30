@@ -64,13 +64,13 @@
 @section('menu_list')
 
     <li>
-        <a href="{{url('expediente/index')}}" class="li_menu_item"><i class="lnr lnr-cloud-upload"></i>
+        <a href="{{url('expediente/index')}}" class="li_menu_item active"><i class="lnr lnr-cloud-upload"></i>
             <span>Gestor de Documentos</span></a>
     </li>
-    <li>
-        <a href="{{url('expediente/registrar')}}" class="active li_menu_item"><i class="lnr lnr-cloud-upload"></i>
-            <span>Registrar Expediente</span></a>
-    </li>
+    {{--    <li>--}}
+    {{--        <a href="{{url('expediente/registrar')}}" class="active li_menu_item"><i class="lnr lnr-cloud-upload"></i>--}}
+    {{--            <span>Registrar Expediente</span></a>--}}
+    {{--    </li>--}}
 
 @endSection
 
@@ -96,11 +96,14 @@
                                             <input type="text"
                                                    class="form-control autocomplete"
                                                    name="txtRecurso"
+                                                   placeholder="CASACION XYZ WXYZ"
                                                    id="txt_Recurso"/>
                                         </div>
                                         <div class="col-md-4 col-lg-4 form-group">
                                             <label for="txt_Expediente">EXPEDIENTE :</label>
-                                            <input type="text" class="form-control autocomplete"
+                                            <input type="text"
+                                                   class="form-control autocomplete"
+                                                   placeholder="000XX XYZ WXYZ"
                                                    id="txt_Expediente"/>
                                         </div>
                                         <div class="col-md-2 col-lg-4 ">
@@ -401,6 +404,7 @@
 
 
         function buscarPartes() {
+            partesList = [];
             errors = 0;
             validarImputs("#txt_Expediente");
             validarImputs("#txt_Recurso");
@@ -637,6 +641,7 @@
             validarImputs("#sel_Documento", "s");
             validarImputs("#txt_Observacion", "s");
             validarPDFs();
+            validarPartes();
 
             if (errors == 0) {
 
@@ -673,7 +678,7 @@
                 })
 
             } else {
-                showMsjError("Verifique todos las entradas de texto!")
+                showMsjError("Verifique todas las entradas de texto")
             }
 
         });
@@ -683,6 +688,13 @@
             if (filesPDF.length == 0) {
                 errors++;
                 showMsjError("Seleccionar al menos un Archivo PDF")
+            }
+        }
+
+        function validarPartes() {
+            if (partesList.length == 0) {
+                errors++;
+                showMsjError("Partes no Existentes")
             }
         }
 

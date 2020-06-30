@@ -30,8 +30,9 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="brand">
-            <a href="index.html"><img src="{!! asset('img/logo-dark.png') !!}" alt="Klorofil Logo"
-                                      class="img-responsive logo"></a>
+            <a href="{{url("expediente/index")}}">
+                <img src="{!! asset('img/logo-dark.png') !!}" alt="Klorofil Logo"
+                     class="img-responsive logo"></a>
         </div>
         <div class="container-fluid">
             <div class="navbar-btn">
@@ -53,7 +54,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{{url('/out')}}">
                                     <i class="lnr lnr-exit"></i>
-                                    <span>Logout</span>
+                                    <span>SALIR</span>
                                 </a></li>
                         </ul>
                     </li>

@@ -8,11 +8,13 @@ use Illuminate\Http\Request;
 
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Types\Array_;
 use PhpParser\Node\Expr\List_;
 use Psy\Util\Json;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Illuminate\Support\Facades\Storage;
+
 
 class ExpedienteController extends Controller
 {
@@ -29,10 +31,9 @@ class ExpedienteController extends Controller
     {
 
         $session = new Session();
-        if ($session->has('username')) {
-            $session->flush();
-            return redirect('/');
-        }
+
+        $session->clear();
+        return redirect('/');
 
 
     }
@@ -74,13 +75,6 @@ class ExpedienteController extends Controller
     }
 
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-
     public function index()
     {
 
@@ -89,9 +83,32 @@ class ExpedienteController extends Controller
         if ($session->get('username')) {
             //dd("usuario existente");
 
-            $registroexpediente = DB::table('registroexpediente')->get();
+            $username = $session->get('usernameId');
 
-            return view('expediente.index', ['registroexpediente' => $registroexpediente]);
+            $EscritosWeb = DB::table('escritoweb')
+                ->join("RegistroExpediente",
+                    function ($join) {
+                        $join->on('RegistroExpediente.n_unico', '=', 'escritoweb.n_unico');
+                    })
+                ->join('tipomotivo', 'registroexpediente.c_motivo_ingreso', '=', 'tipomotivo.c_motivo_ingreso')
+                ->join('actoprocesal', 'actoprocesal.c_acto_procesal', '=', 'escritoweb.c_acto_procesal')
+                ->join("escritodocumentos",
+                    function ($join) {
+                        $join->on('escritodocumentos.n_codigoEscrito', '=', 'escritoweb.n_codigoEscrito');
+                        $join->on('escritodocumentos.n_anoEscrito', '=', 'escritoweb.n_anoEscrito');
+                    })
+                ->leftJoin("estadoescrito",
+                    function ($join) {
+                        $join->on('estadoescrito.n_codigoEscrito', '=', 'escritoweb.n_codigoEscrito');
+                        $join->on('estadoescrito.n_anoEscrito', '=', 'escritoweb.n_anoEscrito');
+                    })
+                ->where("n_abogado", "=", $username)
+                ->where("escritodocumentos.l_tipo_docu", "=", "1")
+                ->get();
+
+            //dd($EscritosWeb);
+
+            return view('expediente.index', ['EscritosWeb' => $EscritosWeb]);
 
         } else {
             return redirect('/');
@@ -157,7 +174,7 @@ class ExpedienteController extends Controller
             $partesList = json_decode($request->get("partesList"), true);
 
 
-            $f_ingresoDocumento = Carbon::now()->format('Y-m-d');
+            $f_ingresoDocumento = Carbon::now()->format('Y-m-d h:i:s');
 
 
             $session = new Session();
@@ -229,7 +246,7 @@ class ExpedienteController extends Controller
                     $countFiles = 0;
                     $SecuenciaFiles = 1;
 
-                    $dateTodayDocumentosPDF = Carbon::now()->format('Y-m-d');
+                    $dateTodayDocumentosPDF = Carbon::now()->format('Y-m-d h:i:s');
 
 
                     $SecuenciaPartes = 1;
@@ -326,14 +343,15 @@ class ExpedienteController extends Controller
         $fileSiizeConvert = round(pow(1024, $base - floor($base)), 2) . $suffixes[floor($base)];
         $fileNumberPages = $request->get('nroPaginas');
 
-
-        $originalname = $request->file('archivo')->getClientOriginalName();
         $session = new Session();
         $userUpload = $session->get('usernameId');
 
 
+        $originalname = $userUpload . "_" . $request->file('archivo')->getClientOriginalName();
+
+
         //Recibimos el archivo y lo guardamos en la carpeta storage/app/public
-        $path = $request->file('archivo')->storeAs('public/pdfs/', $userUpload . "_" . $originalname);
+        $path = $request->file('archivo')->storeAs('public/pdfs/', $originalname);
 
 
         $Document = ["nombre" => $originalname, "size" => $fileSiizeConvert, "sizeByte" => $fileSize, "paginas" => $fileNumberPages];
@@ -351,6 +369,19 @@ class ExpedienteController extends Controller
         $userUpload = $session->get('usernameId');
 
         $result = Storage::delete('public/pdfs/' . $userUpload . "_" . $fileName);
+
+
+    }
+
+    public function getPdf($filename)
+    {
+
+        $path = storage_path($filename);
+
+        return Response::make(file_get_contents("/public/pdfs/" . $filename), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"'
+        ]);
 
 
     }

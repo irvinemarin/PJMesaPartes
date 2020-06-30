@@ -1,6 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,10 +26,7 @@ Route::get('login', function () {
 
 Route::post('validate', 'UsuarioController@validateUser');
 Route::resource('abogado', 'AbogadoController');
-//Route::get('abogado','AbogadoController@store');
 
-//Route::resource('expediente', 'ExpedienteController');
-//Route::resource('expediente', 'ExpedienteController');
 
 Route::get('expediente/index', 'ExpedienteController@index');
 Route::get('expediente/create', 'ExpedienteController@create');
@@ -51,7 +51,12 @@ Route::post('/allPartes', 'ExpedienteController@partesByExpediente');
 Route::post('/search', 'ExpedienteController@getExpediente');
 
 
-//Route::resources('Expediente','ExpedienteController' );
-//Route::resource('users', 'AdminUserController')->parameters([
-//    'users' => 'admin_user'
-//]);
+Route::get('pdf/{filename}', function ($filename) {
+
+    $path = storage_path("app/public/pdfs/" . $filename);
+
+    return Response::make(file_get_contents($path), 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="' . $filename . '"'
+    ]);
+});
